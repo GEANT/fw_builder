@@ -4,6 +4,7 @@
 
 1. [Firewall builder](#firewall-builder)
 2. [Fail2ban allow list](#fail2ban-allow-list)
+3. [Authors](#authors)
 
 ## Firewall builder <a name="firewall-builder"></a>
 
@@ -73,3 +74,8 @@ firewall:
 ## Fail2ban allow list <a name="fail2ban-allow-list"></a>
 
 ipsets listed in the "public" section of the firewall builder will be added to Fail2ban allow-list.
+
+## Authors
+
+[Pete Pedersen](mailto:pete.pedersen@geant.org)
+[Massimiliano Adamo](mailto:massimiliano.adamo@geant.org)

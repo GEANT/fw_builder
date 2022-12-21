@@ -1,0 +1,52 @@
+{
+  "name": "maxadamo-fw_builder",
+  "version": "0.1.0",
+  "author": "maxadamo",
+  "summary": "An easy firewall configurator for Linux",
+  "license": "GPL-3.0",
+  "source": "https://...",
+  "project_page": "https://...",
+  "dependencies": [
+    {
+      "name": "dalen-dnsquery",
+      "version_requirement": ">= 2.0.0 <= 3.0.0"
+    },
+    {
+      "name": "puppetlabs-firewall",
+      "version_requirement": ">= 3.0.0 <= 3.3.0"
+    },
+    {
+      "name": "alexharvey-firewall_multi",
+      "version_requirement": ">= 2.0.0 <= 3.0.0"
+    },
+    {
+      "name": "puppet-ipset",
+      "version_requirement": ">= 2.0.0 <= 2.1.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "18.04",
+        "20.04",
+        "22.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 6.21.0 < 8.0.0"
+    }
+  ],
+  "pdk-version": "2.5.0",
+  "template-url": "pdk-default#2.5.0",
+  "template-ref": "tags/2.5.0-0-g369d483"
+}
