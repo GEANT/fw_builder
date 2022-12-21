@@ -77,5 +77,5 @@ ipsets listed in the "public" section of the firewall builder will be added to F
 
 ## Authors
 
-[Pete Pedersen](mailto:pete.pedersen@geant.org)
+[Pete Pedersen](mailto:pete.pedersen@geant.org)\
 [Massimiliano Adamo](mailto:massimiliano.adamo@geant.org)
