@@ -9,9 +9,9 @@ type Fw_builder::Puppet_environment = Variant[
     'production'
   ],
   Array[Enum[
-    'test',
-    'uat',
-    'production'
+      'test',
+      'uat',
+      'production'
     ]
   ]
 ]
