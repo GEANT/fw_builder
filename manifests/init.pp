@@ -6,7 +6,7 @@
 #   Massimiliano Adamo<massimiliano.adamo@geant.org>
 #
 class fw_builder (
-  Array $trusted_networks,
+  Fw_builder::Iplist $trusted_networks,
   Boolean $manage_docker     = false,
   Boolean $ipv4_enable       = true,
   Boolean $ipv6_enable       = true,
@@ -33,23 +33,33 @@ class fw_builder (
     $ip_proto_array = ['iptables']
   }
 
-  class {
-    'fw_builder::ipset':
-      ipset_package_ensure => $ipset_package_ensure,
-      trusted_networks     => $trusted_networks,
-      ipv4_enable          => $ipv4_enable,
-      ipv6_enable          => $ipv6_enable,
-      before               => Class['fw_builder::chains', 'fw_builder::docker'];
-    'fw_builder::chains':
-      ipv4_enable => $ipv4_enable,
-      ipv6_enable => $ipv6_enable;
-    'fw_builder::post':
-      ipv4_enable => $ipv4_enable,
-      ipv6_enable => $ipv6_enable,
-      limit       => $limit;
-    'fw_builder::logrotate':
-      logging           => $logging,
-      log_rotation_days => $log_rotation_days,
+
+  anchor { 'fw_builder::begin': }
+  -> class {
+    'firewall':;
+  }
+  -> class { 'fw_builder::ipset':
+    ipset_package_ensure => $ipset_package_ensure,
+    trusted_networks     => $trusted_networks,
+    ipv4_enable          => $ipv4_enable,
+    ipv6_enable          => $ipv6_enable,
+    require              => Class['firewall'];
+  }
+  -> class { 'fw_builder::chains':
+    ipv4_enable => $ipv4_enable,
+    ipv6_enable => $ipv6_enable,
+    require     => Class['fw_builder::ipset'];
+  }
+  -> class { 'fw_builder::post':
+    ipv4_enable => $ipv4_enable,
+    ipv6_enable => $ipv6_enable,
+    limit       => $limit;
+  }
+  -> anchor { 'fw_builder::begin': }
+
+  class { 'fw_builder::logrotate':
+    logging           => $logging,
+    log_rotation_days => $log_rotation_days,
   }
 
   if ($purge_rules) {
@@ -62,7 +72,9 @@ class fw_builder (
       }
       class { 'fw_builder::docker':
         ipv4_enable => $ipv4_enable,
-        ipv6_enable => $ipv6_enable;
+        ipv6_enable => $ipv6_enable,
+        before      => Class['fw_builder::post'],
+        require     => Class['fw_builder::ipset'];
       }
     } else {
       if ($ipv4_enable) {
