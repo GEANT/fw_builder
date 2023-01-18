@@ -24,23 +24,17 @@ function fw_builder::fw_builder_public_ips(
   Optional[Array] $facts_ipsets
 ) >> Array {
 
-  if $facts_fw_conf =~ Undef or $facts_ipsets =~ Undef {
   # when puppet runs for the first time these facts are not available
+  if $facts_fw_conf =~ Undef or $facts_ipsets =~ Undef {
     $public_ipsets = []
-  } elsif $facts_fw_conf['public'] =~ String {
   # if public is empty it's seen as empty string
+  } elsif $facts_fw_conf['public'] =~ String {
     $public_ipsets = []
   } else {
-    if 'public' in $facts_fw_conf {
-    # this check is not needed, but it will be necessary if the
-    # code of fw_builder changes and "public" can be absent
+    # if public is present and contains some value
+    if 'public' in $facts_fw_conf and $facts_fw_conf['public'] !~ Undef {
 
       $facts_fw_conf_public = $facts_fw_conf['public']
-
-      # fail on empty hash
-      if $facts_fw_conf_public =~ Undef {
-        fail('fw_builder public is declared but it\'s empty. Please either delete it or add proper values')
-      }
 
       # create a list of lists with all the ipsets in public
       $unflattened_public_ipsets = $facts_fw_conf_public.map |$app_key, $app_value| {
