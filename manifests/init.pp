@@ -55,7 +55,7 @@ class fw_builder (
     ipv6_enable => $ipv6_enable,
     limit       => $limit;
   }
-  -> anchor { 'fw_builder::begin': }
+  -> anchor { 'fw_builder::end': }
 
   class { 'fw_builder::logrotate':
     logging           => $logging,
