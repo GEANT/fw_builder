@@ -32,20 +32,25 @@ function fw_builder::fw_builder_public_ips(
     $public_ipsets = []
   } else {
     # if public is present and contains some value
-    if 'public' in $facts_fw_conf and $facts_fw_conf['public'] !~ Undef {
+    if 'public' in $facts_fw_conf {
 
-      $facts_fw_conf_public = $facts_fw_conf['public']
+      if $facts_fw_conf['public'] =~ Undef {
+        warning('fw_builder public key exists but it\'s empty')
+        $public_ipsets = []
+      } else {
+        $facts_fw_conf_public = $facts_fw_conf['public']
 
-      # create a list of lists with all the ipsets in public
-      $unflattened_public_ipsets = $facts_fw_conf_public.map |$app_key, $app_value| {
-        if 'ipset' in keys($facts_fw_conf_public[$app_key]) {
-          $facts_fw_conf_public[$app_key]['ipset']
+        # create a list of lists with all the ipsets in public
+        $unflattened_public_ipsets = $facts_fw_conf_public.map |$app_key, $app_value| {
+          if 'ipset' in keys($facts_fw_conf_public[$app_key]) {
+            $facts_fw_conf_public[$app_key]['ipset']
+          }
         }
-      }
 
-      # flatten the list of list into a list with unique elements, and remove any Undef
-      $public_ipsets_with_undef = unique(flatten($unflattened_public_ipsets))
-      $public_ipsets = $public_ipsets_with_undef.filter |$item| { $item !~ Undef }
+        # flatten the list of list into a list with unique elements, and remove any Undef
+        $public_ipsets_with_undef = unique(flatten($unflattened_public_ipsets))
+        $public_ipsets = $public_ipsets_with_undef.filter |$item| { $item !~ Undef }
+      }
     } else {
       $public_ipsets = []
     }
