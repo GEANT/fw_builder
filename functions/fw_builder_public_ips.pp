@@ -38,8 +38,8 @@ function fw_builder::fw_builder_public_ips(
       $facts_fw_conf_public = $facts_fw_conf['public']
 
       # fail on empty hash
-      if $facts_fw_conf_public.length =~ Undef {
-        fail('public is declared but it\'s empty. Please either delete it or add proper values')
+      if $facts_fw_conf_public =~ Undef {
+        fail('fw_builder public is declared but it\'s empty. Please either delete it or add proper values')
       }
 
       # create a list of lists with all the ipsets in public
