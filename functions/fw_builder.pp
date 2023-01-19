@@ -133,8 +133,8 @@ function fw_builder::fw_builder() {
   #
   ['public', 'trust'].each() |$zone| {
     if $zone in $fw_conf and empty($fw_conf[$zone]) {
-      echo { 'WARNING fw_builder':
-        message => "'${zone}' zone key is defined but it\'s empty";
+      echo { "WARNING FW Builder zone ${zone}":
+        message => "key '${zone}' is defined but it\'s empty";
       }
     }
   }
