@@ -29,7 +29,9 @@ function fw_builder::fw_builder_public_ips(
     $public_ipsets = []
   # if public is empty it's seen as empty string
   } elsif $facts_fw_conf['public'] =~ String or  $facts_fw_conf['public'] =~ Undef {
-    warning('fw_builder public key exists but it\'s empty')
+    echo { 'WARNING: fw_builder_public_ips':
+      message => 'fw_builder public key exists but it\'s empty';
+    }
     $public_ipsets = []
   } else {
     # if public is present and contains some value
