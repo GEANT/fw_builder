@@ -129,15 +129,20 @@ function fw_builder::fw_builder() {
     content => to_yaml({fw_ipsets => $ipsets});
   }
 
+  # emit warning if the key is deinfed and it's empty
+  #
+  ['public', 'trust'].each() |$zone| {
+    if $zone in $fw_conf and empty($fw_conf[$zone]) {
+      echo { 'WARNING fw_builder':
+        message => "'${zone}' zone key is defined but it\'s empty";
+      }
+    }
+  }
+
   # this section will setup / create all the fwb rules
   #
   ['public', 'trust'].each() |$zone| {
     if $fw_conf[$zone] {
-      if $fw_conf[$zone].length() == 0 {
-        echo { 'WARNING fw_builder':
-          message => "fw_builder ${zone} key exists but it\'s empty";
-        }
-      }
       $fw_conf[$zone].each |$name , $conf| {
         $ports_spaces = $conf['port'] ? {
           Array => join($conf['port'], ' '),
