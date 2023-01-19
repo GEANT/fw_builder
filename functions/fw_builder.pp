@@ -133,6 +133,11 @@ function fw_builder::fw_builder() {
   #
   ['public', 'trust'].each() |$zone| {
     if $fw_conf[$zone] {
+      if $fw_conf[$zone].length() == 0 {
+        echo { 'WARNING fw_builder':
+          message => "fw_builder ${zone} key exists but it\'s empty";
+        }
+      }
       $fw_conf[$zone].each |$name , $conf| {
         $ports_spaces = $conf['port'] ? {
           Array => join($conf['port'], ' '),
