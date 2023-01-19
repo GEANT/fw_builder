@@ -2,13 +2,13 @@
 #
 #
 class fw_builder::ipset (
-  $trusted_networks,
-  $ipset_package_ensure,
-  $ipv4_enable,
-  $ipv6_enable
+  $ipv4_enable = $fw_builder::params::ipv4_enable,
+  $ipv6_enable = $fw_builder::params::ipv6_enable
 ) {
 
   assert_private()
+
+  $trusted_net = $fw_builder::trusted_networks
 
   $firewall_service = $facts['os']['family'] ? {
     'Debian' => 'netfilter-persistent.service',
@@ -22,12 +22,12 @@ class fw_builder::ipset (
 
   class { 'ipset':
     packages         => $packages,
-    package_ensure   => $ipset_package_ensure,
+    package_ensure   => $fw_builder::ipset_package_ensure,
     firewall_service => $firewall_service
   }
 
   if ($ipv4_enable) {
-    $trusted_networks_v4 = $trusted_networks.filter |$ip_range| { $ip_range =~ Stdlib::IP::Address::V4 }
+    $trusted_networks_v4 = $trusted_net.filter |$ip_range| { $ip_range =~ Stdlib::IP::Address::V4 }
     ipset::set { 'trusted_networks_v4':
       ensure => 'present',
       type   => 'hash:net',
@@ -36,7 +36,7 @@ class fw_builder::ipset (
   }
 
   if ($ipv6_enable) {
-    $trusted_networks_v6 = $trusted_networks.filter |$ip_range| { $ip_range =~ Stdlib::IP::Address::V6 }
+    $trusted_networks_v6 = $trusted_net.filter |$ip_range| { $ip_range =~ Stdlib::IP::Address::V6 }
     ipset::set { 'trusted_networks_v6':
       ensure  => 'present',
       type    => 'hash:net',

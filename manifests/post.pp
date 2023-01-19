@@ -1,10 +1,7 @@
 # == Class: fw_builder::post
 #
 class fw_builder::post (
-  $ipv4_enable,
-  $ipv6_enable,
-  $logging,
-  $limit
+  $logging = $fw_builder::params::logging
 ) {
 
   assert_private()
@@ -16,7 +13,7 @@ class fw_builder::post (
           chain     => 'INPUT',
           provider  => $provider,
           jump      => 'LOG',
-          limit     => $limit,
+          limit     => $fw_builder::limit,
           log_level => '4';
         "889 log RST dropped inbound chain for provider ${provider}":
           log_prefix => "[${provider.upcase()} RST RST] dropped";

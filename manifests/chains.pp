@@ -12,54 +12,67 @@
 # === Examples
 #
 class fw_builder::chains (
-  $ipv4_enable,
-  $ipv6_enable
+  $ipv4_enable = $fw_builder::params::ipv4_enable,
+  $ipv6_enable = $fw_builder::params::ipv6_enable
 ) {
 
   assert_private()
 
-  if ($ipv4_enable) {
-    ['udp', 'tcp', 'trust', 'public'].each | $chain | {
-      firewallchain { "INPUT_${chain}:filter:IPv4":
-        ensure  => present;
-      }
+  $fw_builder::ip_proto_array.each | String $provider | {
+    $trusted_net = $provider ? {
+      'iptables' => 'trusted_networks_v4',
+      'ip6tables' => 'trusted_networks_v6',
+    }
+    $icmp_proto = $provider ? {
+      'iptables' => 'icmp',
+      'ip6tables' => 'ipv6-icmp',
+    }
+    firewall { "001 accept all inbound to localhost for ${provider}":
+      chain    => 'INPUT',
+      proto    => all,
+      iniface  => 'lo',
+      action   => accept,
+      provider => $provider;
     }
     firewall {
       default:
         chain    => 'INPUT',
         action   => accept,
         provider => 'iptables';
-      '010 accept all icmp for provider iptables':
-        proto    => 'icmp';
-      '003 accept inbound related established rules for provider iptables':
+      "010 accept all icmp for ${provider}":
+        proto    => $icmp_proto;
+      "003 accept inbound related established rules for ${provider}":
         proto => all,
         state => ['RELATED', 'ESTABLISHED'];
     }
+
     firewall {
       default:
         chain    => 'INPUT',
         jump     => 'INPUT_public',
         state    => ['NEW'],
-        provider => 'ip6tables';
-      '090 IPv4 UDP INPUT_public for all public services':
+        provider => $provider;
+      "090 UDP INPUT_public for all public services for ${provider}":
         proto    => 'udp';
-      '090 IPv4 TCP INPUT_public for all public services':
+      "090 TCP INPUT_public for all public services for ${provider}":
         proto    => 'tcp';
     }
-    firewall { '095 IPv4 INPUT_trust this is for all ip ranges (mostly internal)':
+    firewall { "095 INPUT_trust this is for all ip ranges (mostly internal) for ${provider}":
       chain    => 'INPUT',
       proto    => all,
       state    => ['NEW'],
       jump     => 'INPUT_trust',
-      ipset    => 'trusted_networks_v4 src',
-      provider => 'iptables';
+      ipset    => "${trusted_net} src",
+      provider => $provider;
     }
-    firewall { '001 IPv4 accept all inbound to localhost':
-      chain    => 'INPUT',
-      proto    => all,
-      iniface  => 'lo',
-      action   => accept,
-      provider => 'iptables';
+
+  }
+
+  if ($ipv4_enable) {
+    ['udp', 'tcp', 'trust', 'public'].each | $chain | {
+      firewallchain { "INPUT_${chain}:filter:IPv4":
+        ensure  => present;
+      }
     }
   }
 
@@ -68,43 +81,6 @@ class fw_builder::chains (
       firewallchain { "INPUT_${chain}:filter:IPv6":
         ensure  => present,
       }
-    }
-    firewall {
-      default:
-        chain    => 'INPUT',
-        action   => accept,
-        provider => 'ip6tables';
-      '010 accept all icmp for provider ip6tables':
-        proto    => 'ipv6-icmp';
-      '003 accept inbound related established rules for provider ip6tables':
-        proto => all,
-        state => ['RELATED', 'ESTABLISHED'];
-    }
-    firewall {
-      default:
-        chain    => 'INPUT',
-        jump     => 'INPUT_public',
-        state    => ['NEW'],
-        provider => 'ip6tables';
-      '090 IPv6 UDP INPUT_public for all public services':
-        proto    => 'udp';
-      '090 IPv6 TCP INPUT_public for all public services':
-        proto    => 'tcp';
-    }
-    firewall { '095 IPv6 INPUT_trust this is for all ip ranges (mostly internal)':
-      chain    => 'INPUT',
-      proto    => all,
-      state    => ['NEW'],
-      jump     => 'INPUT_trust',
-      ipset    => 'trusted_networks_v6 src',
-      provider => 'ip6tables';
-    }
-    firewall { '001 IPv6 accept all inbound to localhost6':
-      chain    => 'INPUT',
-      proto    => all,
-      iniface  => 'lo',
-      action   => accept,
-      provider => 'ip6tables';
     }
   }
 

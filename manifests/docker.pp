@@ -11,15 +11,14 @@
 #
 # === Examples
 #
-class fw_builder::docker (
-  $manage_docker,
-  $ipv4_enable,
-  $ipv6_enable
-) {
+# === ToDo
+#
+# ADD SUPPORT FOR IPv6
+#
+class fw_builder::docker {
 
   assert_private()
 
-  # IPv6 IS STILL MISSING
 
   firewallchain { ['INPUT:filter:IPv4', 'OUTPUT:filter:IPv4']:
     purge  => true,
