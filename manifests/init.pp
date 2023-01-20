@@ -3,7 +3,7 @@
 # == Parameters
 #
 # [*trusted_networks*] Fw_builder::Iplist
-# Array of ipv4 and/or ipv6 CIDR
+# Array of ipv4/ipv6 CIDR/Address
 #
 # [*purge_rules*] Boolean
 # Purge rules not defined via Puppet
