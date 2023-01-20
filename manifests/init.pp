@@ -44,7 +44,7 @@ class fw_builder (
   Integer $log_rotation_days = $fw_builder::params::log_rotation_days,
   Optional[String] $limit    = $fw_builder::params::limit,
   $ipset_package_ensure      = $fw_builder::params::ipset_package_ensure
-) {
+) inherits fw_builder::params {
 
   if ! ($purge_rules) and ($manage_docker) {
     fail('cannot set purge_rules to false and manage_docker to true')
