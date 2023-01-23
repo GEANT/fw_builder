@@ -42,7 +42,7 @@ class fw_builder::chains (
       default:
         chain    => 'INPUT',
         action   => accept,
-        provider => 'iptables';
+        provider => $provider;
       "010 accept all icmp for ${provider}":
         proto    => $icmp_proto;
       "003 accept inbound related established rules for ${provider}":
