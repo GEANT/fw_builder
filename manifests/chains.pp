@@ -18,10 +18,6 @@ class fw_builder::chains (
 
   assert_private()
 
-  $test = $fw_builder::ip_proto_array
-
-  echo { "test ${test}":; }
-
   $fw_builder::ip_proto_array.each | String $provider | {
     $trusted_net = $provider ? {
       'iptables' => 'trusted_networks_v4',
