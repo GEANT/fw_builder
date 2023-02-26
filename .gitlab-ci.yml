@@ -1,0 +1,35 @@
+---
+stages:
+  - pdk_validate
+  - g10k_deploy
+  - send_notification
+
+job_validate:
+  stage: pdk_validate
+  script:
+    - /home/gitlab-runner/bin/git-rev-count.sh ${CI_PROJECT_NAME} ${CI_COMMIT_REF_NAME}
+    - pdk validate puppet --parallel
+  tags:
+    - shared-runner
+
+job_deploy:
+  stage: g10k_deploy
+  when: on_success
+  script:
+    - /home/gitlab-runner/bin/ci2puppet.sh ${CI_PROJECT_NAME} ${CI_COMMIT_REF_NAME}
+  tags:
+    - shared-runner
+
+job_notification:
+  stage: send_notification
+  when: on_failure
+  variables:
+    msg: "*ERROR on Commit ID*: ${CI_COMMIT_SHA}\n*Commit Author*: ${GITLAB_USER_NAME}\n*Commit Title*: ${CI_COMMIT_TITLE}\n*Repository*: ${CI_PROJECT_NAME}\n*Branch*: ${CI_COMMIT_REF_NAME}"
+  script:
+    - echo -e "${msg}" > /home/gitlab-runner/${CI_PROJECT_NAME}_msg.txt
+    - cat /home/gitlab-runner/${CI_PROJECT_NAME}_rev_count_msg.txt >> /home/gitlab-runner/${CI_PROJECT_NAME}_msg.txt
+    - cat /home/gitlab-runner/msg_closure.txt >> /home/gitlab-runner/${CI_PROJECT_NAME}_msg.txt
+    - /usr/local/bin/upload_to_slack.sh /home/gitlab-runner/${CI_PROJECT_NAME}_msg.txt post "Puppet CI Error" "${DEVOPS_CHANNEL}" ${DEVOPSBOT_TOKEN} ERROR
+    - cat /home/gitlab-runner/${CI_PROJECT_NAME}_msg.txt | mail -s "Puppet CI Error on Repository ${CI_PROJECT_NAME}" $RCPT
+  tags:
+    - shared-runner

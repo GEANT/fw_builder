@@ -29,6 +29,10 @@
 # [*limit*] Variant[Undef, String]
 # define limit for RST and Dropped connection on post.pp
 #
+# === Requires
+#
+# === Examples
+#
 # == Authors:
 #
 #   Pete Pedersen<pete.pedersen@geant.org>
@@ -36,14 +40,14 @@
 #
 class fw_builder (
   Fw_builder::Iplist $trusted_networks,
-  Boolean $manage_docker     = $fw_builder::params::manage_docker,
-  Boolean $ipv4_enable       = $fw_builder::params::ipv4_enable,
-  Boolean $ipv6_enable       = $fw_builder::params::ipv6_enable,
-  Boolean $logging           = $fw_builder::params::logging,
-  Boolean $purge_rules       = $fw_builder::params::purge_rules,
-  Integer $log_rotation_days = $fw_builder::params::log_rotation_days,
-  Optional[String] $limit    = $fw_builder::params::limit,
-  $ipset_package_ensure      = $fw_builder::params::ipset_package_ensure
+  Boolean $manage_docker       = $fw_builder::params::manage_docker,
+  Boolean $ipv4_enable         = $fw_builder::params::ipv4_enable,
+  Boolean $ipv6_enable         = $fw_builder::params::ipv6_enable,
+  Boolean $logging             = $fw_builder::params::logging,
+  Boolean $purge_rules         = $fw_builder::params::purge_rules,
+  Integer $log_rotation_days   = $fw_builder::params::log_rotation_days,
+  Optional[String] $limit      = $fw_builder::params::limit,
+  String $ipset_package_ensure = $fw_builder::params::ipset_package_ensure
 ) inherits fw_builder::params {
   if ! ($purge_rules) and ($manage_docker) {
     fail('cannot set purge_rules to false and manage_docker to true')

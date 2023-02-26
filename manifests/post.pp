@@ -1,7 +1,16 @@
 # == Class: fw_builder::post
 #
+# == Parameter
+#
+# [*logging*] Boolean
+# enable logging
+#
+# === Requires
+#
+# === Examples
+#
 class fw_builder::post (
-  $logging = $fw_builder::params::logging
+  Boolean $logging = $fw_builder::params::logging
 ) {
   assert_private()
 

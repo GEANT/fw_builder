@@ -1,13 +1,20 @@
 # == Class: fw_builder
 #
-# == Authors:
+# == Parameter
 #
-#   Pete Pedersen<pete.pedersen@geant.org>
-#   Massimiliano Adamo<massimiliano.adamo@geant.org>
+# [*logging*] Boolean
+# enable logging
+#
+# [*log_rotation_days*] Integer
+# define log retention in days
+#
+# === Requires
+#
+# === Examples
 #
 class fw_builder::logrotate (
-  $logging           = $fw_builder::params::logging,
-  $log_rotation_days = $fw_builder::params::log_rotation_days
+  Boolean $logging           = $fw_builder::params::logging,
+  Integer $log_rotation_days = $fw_builder::params::log_rotation_days
 ) {
   assert_private()
 

@@ -24,9 +24,7 @@ function fw_builder::fw_builder() {
   # define, for latter use 
   #
   if ($fw_conf['custom_ipset']) {
-
     $ipsets = $fw_conf['custom_ipset'].keys().map |$name| {
-
       # check if key names are valid
       #
       $ipset_keys = keys($fw_conf['custom_ipset'][$name])
@@ -50,9 +48,11 @@ function fw_builder::fw_builder() {
       # getting IPs or FQDNs from 'hieradata' lookup, if 'hieradata' is defined
       #
       if ($fw_conf['custom_ipset'][$name]['hieradata']) {
-        $_hieradata = flatten($fw_conf['custom_ipset'][$name]['hieradata'].map |$hash_name| {
-          lookup($hash_name, Array, 'deep')
-        })
+        $_hieradata = flatten(
+          $fw_conf['custom_ipset'][$name]['hieradata'].map |$hash_name| {
+            lookup($hash_name, Array, 'deep')
+          }
+        )
         if $_hieradata !~ Fw_builder::List { fail("${_hieradata} types are not IPs, Networks or FQDNs") }
         $hieradata = fw_builder::parser($_hieradata)
       }
@@ -80,7 +80,7 @@ function fw_builder::fw_builder() {
               }
             } else {
               # we use the same environment of the agent
-              $env_string = "= '${::environment}'"
+              $env_string = "= '${facts['agent_specified_environment']}'"
             }
             "facts.fqdn ~ '${hash[name]}' and facts.agent_specified_environment ${env_string}"
           },
@@ -90,7 +90,7 @@ function fw_builder::fw_builder() {
         # facts.fqdn ~ 'nomad\d+\.geant\.org' and facts.agent_specified_environment = 'test') or (facts.fqdn ~ ... 
         $query = "inventory[facts.hostname, facts.ipaddress, facts.ipaddress6, facts.fqdn] { (${pdb_filter}) order by certname }"
         $full_list = puppetdb_query($query)
-        $searchlist = $full_list.map |$hash| { $hash['facts.ipaddress']} + $full_list.map |$hash| { $hash['facts.ipaddress6'] }
+        $searchlist = $full_list.map |$hash| { $hash['facts.ipaddress'] } + $full_list.map |$hash| { $hash['facts.ipaddress6'] }
         # an empty list creates an empty fact, it means that the regex is not working
         # and the firewall setting is ineffective. We better fail here
         if $searchlist !~ Fw_builder::Iplist {
@@ -116,10 +116,9 @@ function fw_builder::fw_builder() {
           "fwb_${name}_v6":
             set     => $full_ip_list_sorted.filter |$ip| { $ip =~ Stdlib::IP::Address::V6 },
             options => {
-              'family' => 'inet6'
-            }
-        };
-        { $name => $full_ip_list }
+              'family' => 'inet6',
+            },
+        }; { $name => $full_ip_list }
       }
     }
   } else {
@@ -127,7 +126,7 @@ function fw_builder::fw_builder() {
   }
 
   file { '/etc/facter/facts.d/fw_ipsets.yaml':
-    content => to_yaml({fw_ipsets => $ipsets});
+    content => to_yaml({ fw_ipsets => $ipsets });
   }
 
   # emit warning if the key is deinfed and it's empty

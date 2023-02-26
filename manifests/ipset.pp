@@ -1,9 +1,20 @@
 # Class: fw_builder::ipset
 #
+# === Parameters
+#
+# [*ipv4_enable*] Boolean
+# enable iptables provider
+#
+# [*ipv6_enable*] Boolean
+# enable ip6tables provider
+#
+# === Requires
+#
+# === Examples
 #
 class fw_builder::ipset (
-  $ipv4_enable = $fw_builder::params::ipv4_enable,
-  $ipv6_enable = $fw_builder::params::ipv6_enable
+  Boolean $ipv4_enable = $fw_builder::params::ipv4_enable,
+  Boolean $ipv6_enable = $fw_builder::params::ipv6_enable
 ) {
   assert_private()
 
@@ -22,7 +33,7 @@ class fw_builder::ipset (
   class { 'ipset':
     packages         => $packages,
     package_ensure   => $fw_builder::ipset_package_ensure,
-    firewall_service => $firewall_service
+    firewall_service => $firewall_service;
   }
 
   if ($ipv4_enable) {
@@ -40,7 +51,9 @@ class fw_builder::ipset (
       ensure  => 'present',
       type    => 'hash:net',
       set     => $trusted_networks_v6,
-      options => {'family' => 'inet6'}
+      options => {
+        'family' => 'inet6',
+      };
     }
   }
 }
