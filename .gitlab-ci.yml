@@ -8,7 +8,7 @@ job_validate:
   stage: pdk_validate
   script:
     - /home/gitlab-runner/bin/git-rev-count.sh ${CI_PROJECT_NAME} ${CI_COMMIT_REF_NAME}
-    - pdk validate puppet --parallel
+    - pdk validate puppet,metadata --parallel
   tags:
     - shared-runner
 
