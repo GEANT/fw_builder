@@ -61,7 +61,7 @@ function fw_builder::fw_builder() {
       #
       if ($fw_conf['custom_ipset'][$name]['puppetdb']) {
         $pdb_hash = $fw_conf['custom_ipset'][$name]['puppetdb']
-        if $pdb_hash !~ Hash { fail("${pdb_hash} must be a hash") }
+        if $pdb_hash !~ Array[Hash] { fail("${pdb_hash} must be a hash") }
         # check if "env" was defined and it contains proper values
         $pdb_filter = join(
           $pdb_hash.map |$hash| {
