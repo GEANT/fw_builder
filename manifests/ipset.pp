@@ -5,7 +5,6 @@ class fw_builder::ipset (
   $ipv4_enable = $fw_builder::params::ipv4_enable,
   $ipv6_enable = $fw_builder::params::ipv6_enable
 ) {
-
   assert_private()
 
   $trusted_net = $fw_builder::trusted_networks
@@ -44,6 +43,5 @@ class fw_builder::ipset (
       options => {'family' => 'inet6'}
     }
   }
-
 }
 # vim:ts=2:sw=2

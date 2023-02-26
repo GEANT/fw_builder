@@ -15,7 +15,6 @@ class fw_builder::chains (
   $ipv4_enable = $fw_builder::params::ipv4_enable,
   $ipv6_enable = $fw_builder::params::ipv6_enable
 ) {
-
   assert_private()
 
   $fw_builder::ip_proto_array.each | String $provider | {
@@ -83,6 +82,5 @@ class fw_builder::chains (
       }
     }
   }
-
 }
 # vim:ts=2:sw=2

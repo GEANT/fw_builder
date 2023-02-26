@@ -23,7 +23,7 @@ function fw_builder::fw_builder_public_ips(
   Variant[String, Hash, Undef] $facts_fw_conf,
   Optional[Array] $facts_ipsets
 ) >> Array {
-
+  #
   # when puppet runs for the first time these facts are not available
   if $facts_fw_conf =~ Undef or $facts_ipsets =~ Undef {
     $public_ipsets = []

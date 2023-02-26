@@ -16,7 +16,6 @@
 # ADD SUPPORT FOR IPv6
 #
 class fw_builder::docker {
-
   assert_private()
 
   firewallchain { ['INPUT:filter:IPv4', 'OUTPUT:filter:IPv4']:
@@ -57,6 +56,5 @@ class fw_builder::docker {
     ]:
     purge  => false,
   }
-
 }
 # vim:ts=2:sw=2

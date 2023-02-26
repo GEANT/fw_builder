@@ -8,7 +8,6 @@
 # Please check the main README: ../README.md
 #
 function fw_builder::fw_builder() {
-
   # time to retrieve hieradata for the firewall 
   #
   $fw_conf = lookup('firewall', Hash, 'deep')

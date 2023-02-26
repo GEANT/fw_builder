@@ -3,7 +3,6 @@
 class fw_builder::post (
   $logging = $fw_builder::params::logging
 ) {
-
   assert_private()
 
   if ($logging) {
@@ -38,6 +37,5 @@ class fw_builder::post (
         action    => 'drop';
     }
   }
-
 }
 # vim:ts=2:sw=2

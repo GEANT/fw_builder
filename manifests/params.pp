@@ -6,7 +6,6 @@
 #   Massimiliano Adamo<massimiliano.adamo@geant.org>
 #
 class fw_builder::params {
-
   # whether to purge rule not defined in puppet
   $purge_rules = true
 
@@ -30,5 +29,4 @@ class fw_builder::params {
 
   # whether to limit RST and dropped connections on post.pp
   $limit = '1000/sec'
-
 }

@@ -20,7 +20,6 @@
 #   IPs with subnet
 #
 function fw_builder::parser(Array $ip_array) >> Array {
-
   if $ip_array.length > 0 {
     $unflattened_cidr_array = $ip_array.map |$ip| {
       if $ip =~ Stdlib::IP::Address::V4::Nosubnet {
